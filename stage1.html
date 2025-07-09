@@ -91,14 +91,17 @@
 
         .modal-content {
             background-color: white;
-            margin: 50% auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             padding: 30px;
             border-radius: 15px;
             width: 90%;
             max-width: 400px;
-            position: relative;
-            transform: translateY(-50%);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .close {
@@ -267,9 +270,9 @@
             }
             
             .modal-content {
-                margin: 40% auto;
                 padding: 20px;
                 width: 95%;
+                max-width: 350px;
             }
             
             .pattern-grid {
@@ -292,6 +295,12 @@
                 font-size: 0.95em;
             }
             
+            .modal-content {
+                padding: 15px;
+                width: 95%;
+                max-width: 320px;
+            }
+            
             .pattern-grid {
                 gap: 12px;
                 max-width: 150px;
@@ -301,11 +310,6 @@
                 width: 40px;
                 height: 40px;
                 font-size: 0.8em;
-            }
-            
-            .modal-content {
-                margin: 30% auto;
-                padding: 15px;
             }
         }
     </style>
