@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>방탈출게임 - 스테이지 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .content-section {
+            padding: 30px;
+        }
+
+        .stage-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .main-image {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .story-text {
+            font-size: 1em;
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .verse-reference {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .answer-button {
+            background: linear-gradient(135deg, #5865f2, #4752c4);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .answer-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin: 20px 0;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #5865f2;
+            box-shadow: 0 0 10px rgba(88, 101, 242, 0.2);
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .feedback-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback-message.success {
+            color: #27ae60;
+            border: 3px solid #27ae60;
+        }
+
+        .feedback-message.error {
+            color: #e74c3c;
+            border: 3px solid #e74c3c;
+        }
+
+        .feedback-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            display: none;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                max-width: 90%;
+            }
+            
+            .content-section {
+                padding: 25px 20px;
+            }
+            
+            .stage-title {
+                font-size: 1.5em;
+            }
+            
+            .main-image {
+                height: 200px;
+                max-width: 350px;
+            }
+            
+            .story-text {
+                font-size: 0.95em;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+                max-width: 350px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-section {
+                padding: 20px 15px;
+            }
+            
+            .stage-title {
+                font-size: 1.3em;
+            }
+            
+            .main-image {
+                height: 180px;
+                max-width: 300px;
+            }
+            
+            .story-text {
+                font-size: 0.9em;
+            }
+            
+            .modal-content {
+                padding: 15px;
+                width: 95%;
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-section">
+            <h1 class="stage-title">이스라엘을 공격한 적은 누구일까?</h1>
+            
+            <div class="image-container">
+                <img src="images/stage2.jpg" alt="이스라엘을 공격하는 적들" class="main-image">
+            </div>
+            
+            <div class="story-text">
+                이스라엘 백성은 거칠고 힘든 광야를 지나고 있었어요.<br>
+                오랜 여정에 모두 지치고 힘들어하고 있었어요.<br>
+                그런데 그런 이스라엘을 뒤따라오는 무리가 있었어요.<br>
+                이스라엘이 르비딤에 이르자 그들은 갑자기 이스라엘 뒤를 공격했어요!<br><br>
+                지금 이스라엘을 공격한 적은 누구일까요?<br>
+                적이 누구인지 알아야 그들과 맞서 싸울 전략을 세울 수 있어요!
+            </div>
+            
+            <div class="verse-reference">
+                출애굽기 17장 8절을 찾아보세요
+            </div>
+            
+            <button class="answer-button" onclick="openModal()">정답입력</button>
+        </div>
+    </div>
+
+    <!-- 피드백 메시지 -->
+    <div class="feedback-overlay" id="feedbackOverlay"></div>
+    <div class="feedback-message" id="feedbackMessage"></div>
+
+    <!-- 모달 창 -->
+    <div id="answerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>이스라엘을 공격한 적은 누구일까요?</h3>
+            <p style="color: #7f8c8d; margin-bottom: 15px;">출애굽기 17장 8절을 참고하세요</p>
+            
+            <input type="text" class="answer-input" id="answerInput" placeholder="정답을 입력하세요" maxlength="10">
+            
+            <button class="submit-button" onclick="checkAnswer()">확인</button>
+        </div>
+    </div>
+
+    <script>
+        const correctAnswer = "아말렉";
+
+        function openModal() {
+            document.getElementById('answerModal').style.display = 'block';
+            document.getElementById('answerInput').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('answerModal').style.display = 'none';
+            document.getElementById('answerInput').value = '';
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedbackMessage = document.getElementById('feedbackMessage');
+            const feedbackOverlay = document.getElementById('feedbackOverlay');
+            
+            feedbackMessage.textContent = message;
+            feedbackMessage.className = `feedback-message ${isSuccess ? 'success' : 'error'}`;
+            feedbackMessage.style.display = 'block';
+            feedbackOverlay.style.display = 'block';
+            
+            setTimeout(() => {
+                feedbackMessage.style.display = 'none';
+                feedbackOverlay.style.display = 'none';
+                
+                if (isSuccess) {
+                    // 성공 시 다음 페이지로 이동
+                    setTimeout(() => {
+                        window.location.href = "stage3.html";
+                    }, 500);
+                }
+            }, 2000);
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            
+            if (!userAnswer) {
+                showFeedback('답을 입력해주세요!', false);
+                return;
+            }
+            
+            if (userAnswer === correctAnswer) {
+                closeModal();
+                showFeedback('다음 페이지로 이동해요!', true);
+            } else {
+                showFeedback('다시 도전해 보세요!', false);
+                document.getElementById('answerInput').value = '';
+                document.getElementById('answerInput').focus();
+            }
+        }
+
+        // Enter 키로 정답 제출
+        document.getElementById('answerInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // 모달 밖 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('answerModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
